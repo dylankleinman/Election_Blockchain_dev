@@ -7,6 +7,9 @@ contract Election{
         string name;
         uint voteCount;
     }
+    //store accounts that have voted
+    mapping(address => bool) public voters;
+
 
     //Use a mapping (like map in JS) to create an array with key mapping for each candidate
     mapping(uint => Candidate) public candidates;
@@ -25,4 +28,21 @@ contract Election{
         candidatesCount ++;
         candidates[candidatesCount] = Candidate(candidatesCount, _name, 0);
     }
+
+
+    //here we are recording that the voter (msg.sender) has their vote recorded for the candidate
+    function vote(uint _candidateId) public {
+        //require that the address hasn't already voted
+        require(!voters[msg.sender]); //provided by solitiy, check if the address (key for mapping) has a bool value of false
+
+        //require that the candidate number is valid
+        require(_candidateId > 0 && _candidateId <=candidatesCount);  //make sure that the id of the candidate is below the total that we have created
+
+        //record that voter(with address) has voted
+        voters[msg.sender] = true;       //msg.sender = account from which the function call is sent (provided by solidity)
+
+        // update candidate votecount
+        candidates[_candidateId].voteCount++;
+    }
+
 }
